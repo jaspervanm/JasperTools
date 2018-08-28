@@ -3,4 +3,5 @@
 export(OR_to_RR)
 export(age)
 export(format_number)
+export(qoac_statistics)
 export(transform_norm)
