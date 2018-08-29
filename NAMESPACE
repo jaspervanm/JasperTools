@@ -2,6 +2,7 @@
 
 export(OR_to_RR)
 export(age)
+export(calc_sdtINR)
 export(calc_vgr)
 export(format_number)
 export(qoac_statistics)
