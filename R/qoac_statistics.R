@@ -25,18 +25,14 @@ qoac_statistics <- function( INR_meas,
 							 to = max( INR_meas$INR_date ),
 							 from = to - 365,
 							 range.lower = 2, range.upper = 3,
-							 period_id = NA_character_,
-							 interpolate_end = FALSE) {
-	MAX_BETWEEN <- 56
-	if(is.character(from)) { from <- as.Date(from) }
-	if(is.character(to)) { to <- as.Date(to) }
-	From <- pmin( from, to)
-	To   <- pmax( from, to)
-
-	INR_meas <- arrange( INR_meas, INR_date )
-	if(!inherits(INR_meas$INR_date, "Date")) {
-		INR_meas$INR_date <- as.Date(INR_meas$INR_date, origin = "1970-01-01")
-	}
+							 period_id = NA_character_) {
+	
+	From <- to_date( pmin(from, to) )
+	To   <- to_date( pmax(from, to) )
+	
+	INR_meas$INR_date <- to_date(INR_meas$INR_date)
+	INR_meas <- as.data.table(INR_meas, key = "INR_date")
+	# this automatically sorts on INR_date
 
 	starters <- map_dbl( From, ~detect_index( INR_meas$INR_date, `>=`, . ) )
 	stoppers <- map2_dbl(  To, starters,
