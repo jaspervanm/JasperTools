@@ -2,10 +2,11 @@
 #'
 #' Calculate Variance Growth Rate according to Cannegieter (2008)
 #' @param INR_meas Data.frame with (at least) the following columns:
-#' INR_date (a date object with the date of the INR measurement),  
+#' INR_date (a date object with the date of the INR measurement),
 #' INR (the international normalised ratio).
 #' Optionally it contains a column tt, with the time between measurements in days.
-#'
+#' @import data.table
+#' @import dplyr
 #' @export
 
 calc_vgr <- function(INR_meas) {

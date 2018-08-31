@@ -5,6 +5,10 @@
 #' the variance growth rate according to Cannegieter,
 #' and the sdtINR according to Lind (2012), using calc_ttr(), calc_vgr() and calc_sdtINR() respectively.
 #' INR measurements more than 56 days apart will not be interpolated.
+#' @import data.table
+#' @import dplyr
+#' @import purrr
+#' @import tibble
 #' @param INR_meas Data.frame with (at least) the following columns:
 #'
 #' * INR_date, a date object with the date of the INR measurement
