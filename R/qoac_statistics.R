@@ -49,10 +49,9 @@ qoac_statistics <- function( INR_meas,
 	INR_meas[ INR > 10, INR := 10 ]
 	INR_meas[ INR < 0.8, INR := 0.8 ]
 
-	starters <- map_dbl( From, ~detect_index( INR_meas$INR_date, `>=`, . ) )
-	stoppers <- map2_dbl(  To, starters,
-						   ~detect_index( unlist( INR_meas[ .y:nrow(INR_meas), "INR_date"] ), `<=`, .x, .right = TRUE ) + .y - 1 )
-	no_meas  <- ( starters * stoppers == 0 | starters >= stoppers )
+	rows <- map2( From, To, ~(INR_meas$INR_date >= .x & INR_meas$INR_date <= .y))
+	names(rows) <- period_id
+	no_meas <- map_lgl(rows, ~sum( .x, na.rm = TRUE) == 0)
 
 	if( all( no_meas ) ) {
 		warning("Voor geen enkele periode INR's beschikbaar", call. = FALSE)
@@ -65,13 +64,8 @@ qoac_statistics <- function( INR_meas,
 		To   <- To[ !no_meas ]
 	}
 
-	rows <- map2( starters, stoppers, ~sort( c( .x, .y) ) ) %>%
-		map( . , ~seq( .[1], .[2] ) )
-	names(rows) <- period_id[ !no_meas ]
-
 	ittr <- pmap_dfr(
-		list(
-			R = map(rows, ~append( . , min( . ) - 1, 0)), from = From, to = To ),
+		list( R = map(rows, ~append( . , TRUE, first(which( . )))), from = From, to = To ),
 		~calc_ttr(INR_meas[ R ], range.lower, range.upper, to, from ),
 		# we use append so calc_ttr will be fed some extra data to interpolate from history to to
 		.id = "period_id"
@@ -84,7 +78,5 @@ qoac_statistics <- function( INR_meas,
 	), .id = "period_id") %>%
 		left_join(periods, by = "period_id")
 
-	output <- full_join( ittr, variability, by = c("from", "to", "period_id") )
-
-	output
+	full_join( ittr, variability, by = c("from", "to", "period_id") )
 }
