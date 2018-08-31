@@ -5,13 +5,13 @@
 \title{Quality of Anticoagulation}
 \usage{
 qoac_statistics(INR_meas, to = max(INR_meas$INR_date), from = to - 365,
-  range.lower = 2, range.upper = 3, period_id = NA_character_,
-  interpolate_end = FALSE)
+  range.lower = 2, range.upper = 3, period_id = NA_character_)
 }
 \arguments{
 \item{INR_meas}{Data.frame with (at least) the following columns:
 
 * INR_date, a date object with the date of the INR measurement
+
 * INR, the international normalised ratio.}
 
 \item{to, from}{Define the period over which the calculcation will take place; default to the latest measurement and 1 year before. Can be a vector, together with `period_id`}
@@ -23,16 +23,16 @@ qoac_statistics(INR_meas, to = max(INR_meas$INR_date), from = to - 365,
 \item{interpolate_end}{If there are measurements after *to*, should they be used to interpolate? Defaults to FALSE.}
 }
 \value{
-data.frame
-with th
+Tibble with time below/in/above range (from 0 to 1), the mean INR, sdtINR and VGR. It gives back the original from,to values, as well as the dates actually used for the analyses (min_date, max_date).
 }
 \description{
 Calculate summary measures for quality of anticoagulation (QOAC) with VKA on a certain time period.
 Calculates the time within the therapeutic range (TTR) based on the Rosendaal method,
 the variance growth rate according to Cannegieter,
-and the sdtINR according to Lind (2012).
+and the sdtINR according to Lind (2012), using calc_ttr(), calc_vgr() and calc_sdtINR() respectively.
 INR measurements more than 56 days apart will not be interpolated.
 }
 \examples{
-transform_norm(runif(100))
+x <- data.frame(INR_date = as.Date("1970-01-01") + c(10, 50, 90), INR = c(1.9, 2.0, 3.6))
+qoac_statistics(x)
 }
