@@ -65,9 +65,14 @@ qoac_statistics <- function( INR_meas,
 	}
 
 	ittr <- pmap_dfr(
-		list( R = map(rows, ~append( . , TRUE, first(which( . )))), from = From, to = To ),
-		~calc_ttr(INR_meas[ R ], range.lower, range.upper, to, from ),
-		# we use append so calc_ttr will be fed some extra data to interpolate from history to to
+		list( R = rows, from = From, to = To ),
+		function( R, from, to ) {
+			i <- first(which(R))
+			if(i > 1) {
+				R[i - 1] <- TRUE # to give calc_ttr some extra data to interpolate from history
+			}
+			calc_ttr( INR_meas[R], range.lower, range.upper, to, from)
+		},
 		.id = "period_id"
 	) %>%
 		left_join(periods, by = "period_id")

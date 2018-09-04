@@ -11,6 +11,8 @@
 #' @export
 
 calc_ttr <- function(INR_meas, range.lower, range.upper, to = max(INR_meas$INR_date), from = min(INR_meas$INR_date)) {
+	from        <- to_date(from)
+	to          <- to_date(to)
 	from_tt     <- as.integer( difftime( from, min(INR_meas$INR_date), units = "days"))
 	# from_tt is >0 when there are INR measurements before the start date, <0 if the start date is earlier than the INR
 	INR_meas$tt <- as.integer( difftime( INR_meas$INR_date, min(INR_meas$INR_date), units = "days" ) )
