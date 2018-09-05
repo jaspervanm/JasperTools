@@ -3,7 +3,6 @@
 #' Summarise a glm, lm or a broom::tidy() object of aforementioned types to
 #' an estimate with 95 percent confidence interval for every term in the object.
 #'
-#' @import dplyr
 #' @import broom
 #' @import tibble
 #' @importFrom stats confint glm
@@ -34,7 +33,7 @@ est_ci.lm <- function(x, ...) {
 }
 
 #' @export
-est_ci.tbl_df <- function(x, digits = 2, dash = "auto", CI_text = "") {
+est_ci.tbl_df <- function(x, digits = 2, dash = "auto", CI_text = "", ...) {
 	y <- paste0( format_number(x$estimate, digits),
 				 " (", CI_text,
 				 format_number(x$conf.low, digits), " ", dash(x, dash), " ",

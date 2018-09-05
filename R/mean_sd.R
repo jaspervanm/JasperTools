@@ -21,7 +21,7 @@ mean_sd.numeric <- function(x, ...) {
 }
 
 #' @export
-mean_sd.matrix <- function(x, digits = 1) {
+mean_sd.matrix <- function(x, digits = 1, ...) {
 	x[] <- format_number(x, digits)
 	paste0(x[, 1], " (", x[, 2], ")")
 }
