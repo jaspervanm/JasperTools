@@ -3,3 +3,4 @@
 export(OR_to_RR)
 export(age)
 export(format_number)
+export(n_pct)
