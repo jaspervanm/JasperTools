@@ -19,8 +19,6 @@ qoac_statistics(INR_meas, to = max(INR_meas$INR_date), from = to - 365,
 \item{range.lower, range.upper}{Define the target range for the time within target range}
 
 \item{period_id}{Names for the periods defined by _to_, _from_}
-
-\item{interpolate_end}{If there are measurements after *to*, should they be used to interpolate? Defaults to FALSE.}
 }
 \value{
 Tibble with time below/in/above range (from 0 to 1), the mean INR, sdtINR and VGR. It gives back the original from,to values, as well as the dates actually used for the analyses (min_date, max_date).

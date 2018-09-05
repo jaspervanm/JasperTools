@@ -18,7 +18,6 @@
 #' @param to,from Define the period over which the calculcation will take place; default to the latest measurement and 1 year before. Can be a vector, together with `period_id`
 #' @param range.lower,range.upper Define the target range for the time within target range
 #' @param period_id Names for the periods defined by _to_, _from_
-#' @param interpolate_end If there are measurements after *to*, should they be used to interpolate? Defaults to FALSE.
 #' @return Tibble with time below/in/above range (from 0 to 1), the mean INR, sdtINR and VGR. It gives back the original from,to values, as well as the dates actually used for the analyses (min_date, max_date).
 #' @export
 #' @examples
