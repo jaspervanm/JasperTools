@@ -6,6 +6,7 @@
 #' The mean and sd of the standard distribution are based on the original data.
 #' @param x Vector of inputs
 #' @return X transformed to a normal distribution.
+#' @importFrom stats ecdf qnorm sd
 #' @export
 #' @examples
 #' transform_norm(runif(100))

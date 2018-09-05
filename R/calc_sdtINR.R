@@ -6,7 +6,8 @@
 #' INR (the international normalised ratio).
 #' Optionally it contains a column tt, with the time between measurements in days.
 #' @import data.table
-#' @import dplyr
+#' @importFrom magrittr %>%
+#' @importFrom stats lm deviance df.residual
 #' @export
 
 calc_sdtINR <- function(INR_meas) {

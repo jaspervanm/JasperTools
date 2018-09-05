@@ -14,13 +14,8 @@ Imports:
 Depends:
 	stats,
 	data.table,
-	ggplot2,
+	broom,
 	dplyr,
-	tidyr,
-	readr,
 	purrr,
 	tibble,
-	stringr,
-	forcats,
-	knitr,
-	ggthemes
+	magrittr

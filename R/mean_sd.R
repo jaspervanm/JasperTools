@@ -6,6 +6,7 @@
 #' @param x Numerical vector
 #' @param digits Number of decimals to use
 #' @return Character vector
+#' @importFrom stats sd
 #' @export
 #' @examples
 #' mean_sd(1:10)
@@ -13,6 +14,7 @@
 mean_sd <- function(...) UseMethod("mean_sd")
 
 #' @export
+#' @importFrom stats sd
 mean_sd.numeric <- function(x, ...) {
 	cbind(M = mean(x), Sd = sd(x)) %>%
 		mean_sd(...)
