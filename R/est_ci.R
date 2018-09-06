@@ -33,6 +33,18 @@ est_ci.lm <- function(x, ...) {
 }
 
 #' @export
+est_ci.data.frame <- function(x, ... ) {
+	i <- colnames(x)
+	j <- c("term", "estimate", "std.error", "conf.low", "conf.high")
+	if(all(j %in% i)) {
+		est_ci.tbl_df(x, ...)
+	} else {
+		warning("est_ci doesn't know how to handle this data.frame, returning NA")
+		return(NA)
+	}
+}
+
+#' @export
 est_ci.tbl_df <- function(x, digits = 2, dash = "auto", CI_text = "", ...) {
 	y <- paste0( format_number(x$estimate, digits),
 				 " (", CI_text,
