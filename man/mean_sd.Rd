@@ -15,8 +15,10 @@ mean_sd(...)
 Character vector
 }
 \description{
-Summarise a numerical vector to a mean and a SD.
+Summarise a numerical vector to a mean and a SD,
+or a median and an interquartile range (p25 and p75).
 }
 \examples{
 mean_sd(1:10)
+median_iqr(1:10)
 }
