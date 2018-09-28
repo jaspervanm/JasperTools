@@ -20,8 +20,8 @@ median_iqr <- function(...) UseMethod("median_iqr")
 
 #' @export
 #' @importFrom stats sd
-mean_sd.numeric <- function(x, ...) {
-	cbind(M = mean(x), Sd = sd(x)) %>%
+mean_sd.numeric <- function(x, na.rm = FALSE, ...) {
+	cbind(M = mean(x, na.rm = na.rm), Sd = sd(x, na.rm = na.rm)) %>%
 		mean_sd(...)
 }
 
@@ -33,8 +33,11 @@ mean_sd.matrix <- function(x, digits = 1, ...) {
 
 #' @export
 #' @importFrom stats median quantile
-median_iqr.numeric <- function(x, ...) {
-	cbind(M = median(x), p25 = quantile(x, 0.25), p75 = quantile(x, 0.75)) %>%
+median_iqr.numeric <- function(x, na.rm = FALSE, ...) {
+	cbind( M   = median(x, na.rm = na.rm),
+		   p25 = quantile(x, 0.25, na.rm = na.rm),
+		   p75 = quantile(x, 0.75, na.rm = na.rm)
+	) %>%
 		median_iqr(...)
 }
 
