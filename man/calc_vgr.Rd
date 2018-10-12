@@ -8,10 +8,12 @@ calc_vgr(INR_meas)
 }
 \arguments{
 \item{INR_meas}{Data.frame with (at least) the following columns:
-INR_date (a date object with the date of the INR measurement),  
+INR_date (a date object with the date of the INR measurement),
 INR (the international normalised ratio).
 Optionally it contains a column tt, with the time between measurements in days.}
 }
 \description{
-Calculate Variance Growth Rate according to Cannegieter (2008)
+Calculate Variance Growth Rate according to Fihn SD, et al.
+The risk for and severity of bleeding complications in elderly patients
+treated with warfarin. Ann Intern Med. 1996;124(11):970–9.
 }

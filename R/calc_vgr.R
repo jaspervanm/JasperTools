@@ -1,6 +1,9 @@
 #' Variance growth rate
 #'
-#' Calculate Variance Growth Rate according to Cannegieter (2008)
+#' Calculate Variance Growth Rate according to Fihn SD, et al.
+#' The risk for and severity of bleeding complications in elderly patients
+#' treated with warfarin. Ann Intern Med. 1996;124(11):970–9.
+#'
 #' @param INR_meas Data.frame with (at least) the following columns:
 #' INR_date (a date object with the date of the INR measurement),
 #' INR (the international normalised ratio).
