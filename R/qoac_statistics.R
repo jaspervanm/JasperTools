@@ -50,17 +50,20 @@ qoac_statistics <- function( INR_meas,
 
 	rows <- map2( From, To, ~(INR_meas$INR_date >= .x & INR_meas$INR_date <= .y))
 	names(rows) <- period_id
-	no_meas <- map_lgl(rows, ~sum( .x, na.rm = TRUE) == 0)
 
+	no_meas <- map_lgl(rows, ~sum( .x, na.rm = TRUE) < 2)
 	if( all( no_meas ) ) {
 		warning("Voor geen enkele periode INR's beschikbaar", call. = FALSE)
 		return( data.frame() )
 	} else if( any( no_meas ) ) {
-		warning("Geen INR's beschikbaar voor periode", map2(to, from, ~paste(.x, "-", .y)), call. = FALSE)
-		starters <- starters[ !no_meas ]
-		stoppers <- stoppers[ !no_meas ]
-		From <- From[ !no_meas ]
-		To   <- To[ !no_meas ]
+		warning("Onvoldoende INR's beschikbaar voor periodes: ",
+				pmap_chr(
+					list(period_id[no_meas], From[no_meas], To[no_meas]),
+					paste, collapse = ", "
+				), call. = FALSE)
+		rows[no_meas] <- NULL
+		From <- From[!no_meas]
+		To   <- To[!no_meas]
 	}
 
 	ittr <- pmap_dfr(
