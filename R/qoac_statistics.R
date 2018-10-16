@@ -44,7 +44,7 @@ qoac_statistics <- function( INR_meas,
 	)
 
 	INR_meas$INR_date <- to_date(INR_meas$INR_date)
-	INR_meas <- as.data.table(INR_meas, key = "INR_date")
+	data.table::setDT(INR_meas, key = "INR_date")
 	# this automatically sorts on INR_date
 	INR_meas[ INR > 10, INR := 10 ]
 	INR_meas[ INR < 0.8, INR := 0.8 ]
