@@ -29,62 +29,74 @@ qoac_statistics <- function( INR_meas,
 							 to = max( INR_meas$INR_date ),
 							 from = to - 365,
 							 range.lower = 2, range.upper = 3,
-							 period_id = NA_character_) {
-
-	From <- to_date( pmin(from, to) )
-	To   <- to_date( pmax(from, to) )
-
-	if(all(is.na(period_id))) {
-		period_id <- as.character(seq_along(period_id))
-	}
-	periods <- tibble(
-		period_id = period_id,
-		from      = From,
-		to        = To
-	)
-
+							 period_id = NA_character_,
+							 calculate = c("TTR", "VGR", "mean_INR")) {
+	
+	#---- Correct input data ----
 	INR_meas$INR_date <- to_date(INR_meas$INR_date)
 	data.table::setDT(INR_meas, key = "INR_date")
 	# this automatically sorts on INR_date
 	INR_meas[ INR > 10, INR := 10 ]
 	INR_meas[ INR < 0.8, INR := 0.8 ]
-
-	rows <- map2( From, To, ~(INR_meas$INR_date >= .x & INR_meas$INR_date <= .y))
-	names(rows) <- period_id
-
-	no_meas <- map_lgl(rows, ~sum( .x, na.rm = TRUE) < 2)
-	if( all( no_meas ) ) {
-		warning("Voor geen enkele periode INR's beschikbaar", call. = FALSE)
-		return( data.frame() )
-	} else if( any( no_meas ) ) {
-		warning("Onvoldoende INR's beschikbaar voor periodes: ",
-				pmap_chr(
-					list(period_id[no_meas], From[no_meas], To[no_meas]),
-					paste, collapse = ", "
-				), call. = FALSE)
-		rows[no_meas] <- NULL
-		From <- From[!no_meas]
-		To   <- To[!no_meas]
-	}
-
-	ittr <- pmap_dfr(
-		list( R = rows, from = From, to = To ),
-		function( R, from, to ) {
-			i <- first(which(R))
-			if(i > 1) {
-				R[i - 1] <- TRUE # to give calc_ttr some extra data to interpolate from history
+	INR_meas$tt  <- as.integer(difftime(INR_meas$INR_date, min(INR_meas$INR_date), units = "days"))
+	INR_meas$dtt <- c(diff(INR_meas$tt), 0L)
+	
+	#---- Determine periods ----
+	periods <- data.table(
+		period_id = period_id,
+		from      = as.integer(from),
+		to        = as.integer(to),
+		per_id    = paste(from, to)
+	)
+	
+	if("TTR" %in% calculate) {
+		periods$rows <- map2(from, to, function(From, To) {
+			i <- pmax( detect_index(INR_meas$INR_date, `<=`, From, .dir = "backward"), 1)
+			j <- pmin( detect_index(INR_meas$INR_date, `<=`, To, .dir = "backward"), nrow(INR_meas))
+			
+			seq(i, j)
+		})
+		
+		periods$TTR <- pmap(periods[ , c("from", "to", "rows")], function(...) {
+			args <- list(...)
+			
+			x <- INR_meas[args$rows, ]
+			if(any(x$dtt > 56)) {
+				warning("More than 56 days between measurements, no interpolation appropriate")
+				data.frame()
+			} else {
+				y <- approx(as.integer(x$INR_date), x$INR, seq(args$from, args$to, by = 1))$y %>%
+					na.omit()
+				data.table(
+					below_range = mean(y < range.lower),
+					in_range    = mean(y <= range.upper) - mean(y < range.lower),
+					above_range = mean(y > range.upper)
+				)
 			}
-			calc_ttr( INR_meas[R], range.lower, range.upper, to, from)
-		},
-		.id = "period_id"
-	) %>%
-		left_join(periods, by = "period_id")
-
-	variability <- map_dfr(rows, ~tibble(
-		vgr = calc_vgr(INR_meas[ .x ]),
-		sdtINR = calc_sdtINR(INR_meas [ .x ])
-	), .id = "period_id") %>%
-		left_join(periods, by = "period_id")
-
-	full_join( ittr, variability, by = c("from", "to", "period_id") )
+		})
+	}
+	if("VGR" %in% calculate | "mean_INR" %in% calculate) {
+		
+		splitted_data <- periods[ INR_meas,
+								  .( INR_date = i.INR_date, INR = i.INR, tt = i.tt,
+								     per_id = x.per_id
+								  ),
+								  on = .(from <= INR_date, to >= INR_date),
+								  nomatch = NULL, mult = "all", allow.cartesian = TRUE]
+		
+		if("VGR" %in% calculate) {
+			periods$VGR <- splitted_data[ , .(
+				VGR = mean( diff(INR)^2 / diff(tt / 7) )
+			), by = "per_id"][ periods, .(VGR), on = "per_id", nomatch = NA]
+		}
+		if("mean_INR" %in% calculate) {
+			periods$mean_INR <- splitted_data[ , .(
+				mean_INR = mean( INR )
+			), by = "per_id"][ periods, .(mean_INR), on = "per_id", nomatch = NA]
+		}
+	}
+	
+	periods %>%
+		select(period_id, from, to, one_of(intersect(calculate, colnames(periods)))) %>%
+		unnest()
 }
