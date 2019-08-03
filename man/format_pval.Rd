@@ -4,12 +4,12 @@
 \alias{format_pval}
 \title{Format a P value}
 \usage{
-format_pval(x, digits = 3, small = 10^(-1 * digits))
+format_pval(x, digits = 2, small = 10^(-1 * (digits + 1)))
 }
 \arguments{
 \item{x}{Numerical vector}
 
-\item{digits}{Decimals to show}
+\item{digits}{Digits to show}
 
 \item{small}{Threshold to show "smaller than X"}
 }
