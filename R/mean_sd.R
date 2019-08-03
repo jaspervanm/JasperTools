@@ -28,7 +28,7 @@ mean_sd.numeric <- function(x, na.rm = FALSE, ...) {
 #' @export
 mean_sd.matrix <- function(x, digits = 1, ...) {
 	x[] <- format_number(x, digits)
-	paste0(x[, 1], " (", x[, 2], ")")
+	paste0(x[, 1], " &plusmn; ", x[, 2])
 }
 
 #' @export
@@ -44,5 +44,5 @@ median_iqr.numeric <- function(x, na.rm = FALSE, ...) {
 #' @export
 median_iqr.matrix <- function(x, digits = 1, ...) {
 	x[] <- format_number(x, digits)
-	paste0(x[, 1], " (IQR ", x[, 2], " -- ", x[, 3], ")")
+	paste0(x[, 1], " [", x[, 2], " -- ", x[, 3], "]")
 }
