@@ -14,8 +14,8 @@ format_pval <- function(x, digits = 2, small = 10^(-1 * (digits + 1))) {
 	ifelse(x < small,
 		   paste0("<", small),
 		   ifelse( x < 10^(-1 * digits),
-		   		round(x, digits + 1),
-		   		round(x, digits)
+		   		JasperTools::format_number(x, digits + 1),
+		   		JasperTools::format_number(x, digits)
 		   )
 	)
 }
