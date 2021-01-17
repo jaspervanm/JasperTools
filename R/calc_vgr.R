@@ -20,6 +20,6 @@ calc_vgr <- function(INR_meas) {
 
 	INR_meas[ , list(INR = mean(INR)), by = tt] %>% # this removes the tt == 0
 	with({
-		mean( diff(INR)^2 / diff(tt / 7) )
+		sqrt( mean( diff(INR)^2 / diff(tt) ) )
 	})
 }
